@@ -21,7 +21,7 @@
 .org 0x00 
                 jmp prog_start 
 .org PCINT1addr 
-                jmp keypad_ISR  ;Keypad External Interrupt Request
+                jmp keypad_ISR       ; Keypad External Interrupt Request
 .org 0x32 digit:
 .db 0x7e, 0x30, 0x6d, 0x79, 0x33, 0x5b, 0x5f, 0x70, 0x7f, 0x7b, 0x77, 0x1f, 0x4e, 0x3d, 0x4f, 0x47
 .org 0x100
@@ -40,14 +40,17 @@ prog_start:
                   ldi r16, 0xff
                   out ddrd, r16
                   out ddre, r16
+                  
                   ; portc columns as inputs
                   ldi r16, 0x00
                   out ddrc, r16
                   ldi r16, 0x0f
                   out portc, r16
+                  
                   ; portb rows as outputs
                   ldi r16, 0x0f
                   out ddrb, r16
+                  
                   ; interrupt initialization
                   ldi counter_low, (1<<pcint8)|(1<<pcint9)|(1<<pcint10)|(1<<pcint11)
                   sts pcmsk1, r16
@@ -68,8 +71,9 @@ initial_state:    ; init all values
                   ldi counter_high, 0x0
                   ldi counter_low, 0x0
                   ldi keypad_block, 0x0
+                  
 ;-------------------------------------------------------------------------------------
-; Loop
+;                                      Loop
 ;-------------------------------------------------------------------------------------
 
 setup_loop:
@@ -87,15 +91,16 @@ start_countdown:
                   cp counter_high, r16
                   brne countdown_100_percent
                   pop r16
-                  jmp prog_start ; if counter value == 0 => go to prog_start
+                  jmp prog_start                                      ; if counter value == 0 => go to prog_start
                   
 countdown_100_percent: ; start counting for sure
                   pop r16
-                  ldi comparator, 0xff          ; set comparator to 0xff and use it in countdown
+                  ldi comparator, 0xff                                ; set comparator to 0xff and use it in countdown
                   loop
                   ldi reset_flag, 0xfe
                   call countdown
-                  rjmp initial_state            ; or jmp prog_start 
+                  rjmp initial_state                                  ; or jmp prog_start 
+                  
 ;-------------------------------------------------------------------------------------
 ;                                   INTERRUPT
 ;-------------------------------------------------------------------------------------
