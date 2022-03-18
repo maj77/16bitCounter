@@ -79,12 +79,12 @@ initial_state:    ; init all values
 setup_loop:
                   call display
  
-                  cp start_flag, comparator ; checks if s13 was pressed
-                  breq start_countdown ; if yes - starts counting down
+                  cp start_flag, comparator                           ; checks if s13 was pressed
+                  breq start_countdown                                ; if yes - starts counting down
                   rjmp setup_loop
                   
 start_countdown:
-                  push r16 ; check if counter value == 0 
+                  push r16                                            ; check if counter value == 0 
                   ldi r16, 0x00
                   cp counter_low, r16
                   brne countdown_100_percent
